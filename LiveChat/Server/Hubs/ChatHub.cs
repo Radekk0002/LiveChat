@@ -10,6 +10,11 @@ namespace LiveChat.Server.Hubs
 {
     public class ChatHub : Hub
     {
+        Random rng;
+        public ChatHub(Random rng)
+        {
+            this.rng = rng;
+        }
         public async Task SendMessage(Message message)
         {            
             if(message.Msg.Length > 0)
@@ -22,7 +27,6 @@ namespace LiveChat.Server.Hubs
 
         public override Task OnConnectedAsync()
         {
-            Random rng = new Random();
             string user = $"guest{rng.Next(1, 999999999)}";
             Users.users.Add(Context.ConnectionId, user);
             Clients.Caller.SendAsync("GetUser", user);

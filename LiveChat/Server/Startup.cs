@@ -30,6 +30,8 @@ namespace LiveChat.Server
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
             });
+
+            services.AddSingleton<System.Random>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
