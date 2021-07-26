@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@using LiveChat.Shared
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<div class="container border rounded overflow-hidden">
+    <div class="pt-3 pb-3 text-center">
+        <h1 class="m-2">Hello, @name</h1>
+    </div>
+    <div @ref="msgContainer" class="pt-3 pb-3 border-top border-bottom" id="msgContainer">
+        @foreach (LiveChat.Shared.Message msg in messages)
+        {
+            <Message Msg="@msg.Msg" Date="msg.Date" User="@(msg.User == name ? "You" : msg.User)"></Message>
+        }
+    </div>
+
+    <div class="d-flex pt-3 pb-3">
+        <textarea @bind="myMessage.Msg" class="flex-grow-1 rounded p-2" placeholder="Your message"></textarea>
+        <button disabled="@(!IsConnected)" @onclick="()=>SendMsg(myMessage)" class="align-self-end ml-2 mb-2 bg-primary rounded">Send</button>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    private HubConnection hubConnection;
+    private LinkedList<LiveChat.Shared.Message> messages = new LinkedList<LiveChat.Shared.Message>();
+    private ElementReference msgContainer;
+    string name;
+    LiveChat.Shared.Message myMessage = new LiveChat.Shared.Message();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+        .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+        .Build();
+
+        hubConnection.On<LiveChat.Shared.Message>("ReceiveMessage", async (message) =>
+        {
+            messages.AddLast(message);
+            StateHasChanged();
+
+            await JS.InvokeVoidAsync("ScrollToTop", msgContainer);
+        });
+
+        hubConnection.On<string>("GetUser", (user) =>
+        {
+            name = user;
+            myMessage.User = name;
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task SendMsg(LiveChat.Shared.Message msg)
+    {
+        if (msg?.Msg.Length > 0)
+        {
+            await hubConnection.SendAsync("SendMessage", msg);
+
+            myMessage.Msg = "";
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+}

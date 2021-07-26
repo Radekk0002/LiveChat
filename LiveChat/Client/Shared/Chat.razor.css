@@ -1,0 +1,63 @@
+﻿h1{
+    font-size: 2rem;
+}
+#msgContainer {
+    height: 30rem;
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+    #msgContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #msgContainer::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #a9a9a9;
+    }
+
+textarea {
+    resize: none;
+    font-size: .85rem;
+    border: 1px solid #c1c9d0;
+    scrollbar-width: thin;
+}
+
+    textarea:focus {
+        outline-color: #c1c9d0;
+        border: 1px solid #c1c9d0;
+    }
+
+    textarea::-webkit-scrollbar{
+        width: 8px;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #a9a9a9;
+    }
+
+button{
+    width: 70px;
+    height: 40px;
+    border: none;
+    outline: none;
+    color: white;
+    cursor: pointer;
+}
+
+@media (min-width: 992px){
+    .container{
+        max-width: 720px;
+    }
+
+    textarea{
+        height: 85px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 720px;
+    }
+}
