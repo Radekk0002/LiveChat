@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using LiveChat.Server.Data;
 using LiveChat.Shared;
+using LiveChat.Server.Interfaces;
 
 namespace LiveChat.Server.Hubs
 {
     public class ChatHub : Hub
     {
-        Random rng;
-        public ChatHub(Random rng)
+        IRandomID rng;
+        public ChatHub(IRandomID rng)
         {
             this.rng = rng;
         }
@@ -27,7 +28,7 @@ namespace LiveChat.Server.Hubs
 
         public override Task OnConnectedAsync()
         {
-            string user = $"guest{rng.Next(1, 999999999)}";
+            string user = $"guest{rng.CreateID()}";
             Users.users.Add(Context.ConnectionId, user);
             Clients.Caller.SendAsync("GetUser", user);
             return base.OnConnectedAsync();

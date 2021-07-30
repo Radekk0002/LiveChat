@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using LiveChat.Server.Hubs;
+using LiveChat.Server.Interfaces;
+using LiveChat.Server.Services;
 
 namespace LiveChat.Server
 {
@@ -31,7 +33,7 @@ namespace LiveChat.Server
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
             });
 
-            services.AddSingleton<System.Random>();
+            services.AddSingleton<IRandomID, RandomID>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
